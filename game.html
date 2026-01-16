@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>双色球模拟器</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- 年龄验证页面 -->
+        <div id="age-verification">
+            <div class="container">
+                <h1>双色球模拟器</h1>
+                <p>根据相关规定，购买彩票需年满18周岁</p>
+                <div class="age-form">
+                    <label for="age">请输入您的年龄：</label>
+                    <input type="number" id="age" min="1" max="120" placeholder="请输入年龄">
+                    <button id="verify-age">进入模拟器</button>
+                    <p id="age-error" class="error-message"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 主游戏页面 -->
+        <div id="game-page" style="display: none;">
+            <div class="container">
+                <header>
+                    <button class="back-button" id="backToHome">主页</button>
+                    <button class="reset-button" id="resetBtn">重置</button>
+                    <button class="save-button" id="saveBtn">保存</button>
+                    <h1>双色球模拟器</h1>
+                </header>
+
+                <div class="achievements-section">
+                    <div class="achievement-badge" id="achievement-first" data-achievement="first">
+                        <div class="achievement-icon">🏆</div>
+                        <div class="achievement-name">一等奖</div>
+                    </div>
+                    <div class="achievement-badge" id="achievement-second" data-achievement="second">
+                        <div class="achievement-icon">🥈</div>
+                        <div class="achievement-name">二等奖</div>
+                    </div>
+                    <div class="achievement-badge" id="achievement-third" data-achievement="third">
+                        <div class="achievement-icon">🥉</div>
+                        <div class="achievement-name">三等奖</div>
+                    </div>
+                    <div class="achievement-badge" id="achievement-fourth" data-achievement="fourth">
+                        <div class="achievement-icon">⭐</div>
+                        <div class="achievement-name">四等奖</div>
+                    </div>
+                    <div class="achievement-badge" id="achievement-fifth" data-achievement="fifth">
+                        <div class="achievement-icon">⭐</div>
+                        <div class="achievement-name">五等奖</div>
+                    </div>
+                    <div class="achievement-badge" id="achievement-sixth" data-achievement="sixth">
+                        <div class="achievement-icon">⭐</div>
+                        <div class="achievement-name">六等奖</div>
+                    </div>
+                    <div class="achievement-badge" id="achievement-redCollection" data-achievement="redCollection">
+                        <div class="achievement-icon">🔴</div>
+                        <div class="achievement-name">红球全集</div>
+                    </div>
+                    <div class="achievement-badge" id="achievement-blueCollection" data-achievement="blueCollection">
+                        <div class="achievement-icon">🔵</div>
+                        <div class="achievement-name">蓝球全集</div>
+                    </div>
+                </div>
+
+                <div class="winning-stats">
+                    <h3></h3>
+                    <div class="stats-grid">
+                        <div class="stat-item first-prize">
+                            <span class="prize-name">一等奖</span>
+                            <span class="prize-count" id="first-prize-count">0</span>
+                            <span class="prize-probability" id="first-prize-probability">0.00‰</span>
+                        </div>
+                        <div class="stat-item second-prize">
+                            <span class="prize-name">二等奖</span>
+                            <span class="prize-count" id="second-prize-count">0</span>
+                            <span class="prize-probability" id="second-prize-probability">0.00‰</span>
+                        </div>
+                        <div class="stat-item third-prize">
+                            <span class="prize-name">三等奖</span>
+                            <span class="prize-count" id="third-prize-count">0</span>
+                            <span class="prize-probability" id="third-prize-probability">0.00‰</span>
+                        </div>
+                        <div class="stat-item fourth-prize">
+                            <span class="prize-name">四等奖</span>
+                            <span class="prize-count" id="fourth-prize-count">0</span>
+                            <span class="prize-probability" id="fourth-prize-probability">0.00‰</span>
+                        </div>
+                        <div class="stat-item fifth-prize">
+                            <span class="prize-name">五等奖</span>
+                            <span class="prize-count" id="fifth-prize-count">0</span>
+                            <span class="prize-probability" id="fifth-prize-probability">0.00‰</span>
+                        </div>
+                        <div class="stat-item sixth-prize">
+                            <span class="prize-name">六等奖</span>
+                            <span class="prize-count" id="sixth-prize-count">0</span>
+                            <span class="prize-probability" id="sixth-prize-probability">0.00‰</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="game-layout">
+                    <div class="left-panel">
+                        <div class="info-overview">
+                            <div class="info-card">
+                                <h3>累计消费</h3>
+                                <p class="amount"><span id="total-cost">0</span> 元</p>
+                            </div>
+                            <div class="info-card">
+                                <h3>累计中奖</h3>
+                                <p class="amount"><span id="total-winnings">0</span> 元</p>
+                            </div>
+                        </div>
+
+                        <div class="game-info" id="game-info">
+                            <h3>游戏信息</h3>
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <span class="info-label">模拟日期：</span>
+                                    <span class="info-value" id="today-date">--</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">模拟年龄：</span>
+                                    <span class="info-value" id="user-age">--</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">购买组数：</span>
+                                    <span class="info-value" id="purchase-count">0</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">净亏损：</span>
+                                    <span class="info-value" id="net-loss">0</span> 元
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="lottery-settings">
+                            <h3>彩票设置</h3>
+                            <div class="settings-row">
+                                <div class="setting-item">
+                                    <label>选号方式：</label>
+                                    <div class="radio-group">
+                                        <label class="radio-label">
+                                            <input type="radio" name="selection-mode" value="random" checked>
+                                            <span>机选号码</span>
+                                        </label>
+                                        <label class="radio-label">
+                                            <input type="radio" name="selection-mode" value="manual">
+                                            <span>自选号码</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="settings-row">
+                                <div class="setting-item" id="group-count-setting">
+                                    <label for="group-count">组数：</label>
+                                    <input type="number" id="group-count" min="1" max="10" value="1">
+                                </div>
+                                <div class="setting-item">
+                                    <label for="note-count">每组注数：</label>
+                                    <input type="number" id="note-count" min="1" max="10" value="1">
+                                </div>
+                            </div>
+                            <div class="settings-row">
+                                <div class="setting-item">
+                                    <label>本次花费：</label>
+                                    <span id="current-cost">2</span> 元
+                                </div>
+                                <button id="buy-ticket" class="primary-button">买彩票</button>
+                            </div>
+                            <div class="settings-row">
+                                <div class="setting-item">
+                                    <input type="checkbox" id="show-process" checked>
+                                    <label for="show-process">查看过程</label>
+                                </div>
+                                <button id="auto-first-prize" class="secondary-button">冲刺一等奖</button>
+                                <button id="pause-auto" class="secondary-button" style="display: none;">暂停</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="right-panel">
+                        <div class="manual-selection" id="manual-selection" style="display: none;">
+                            <h3>自选号码</h3>
+                            <div class="manual-tabs">
+                                <div class="manual-tab active" data-group="1">第1组</div>
+                                <div class="manual-tab" data-group="2">第2组</div>
+                                <div class="manual-tab" data-group="3">第3组</div>
+                                <div class="manual-tab" data-group="4">第4组</div>
+                                <div class="manual-tab" data-group="5">第5组</div>
+                                <div class="manual-tab" data-group="6">第6组</div>
+                                <div class="manual-tab" data-group="7">第7组</div>
+                                <div class="manual-tab" data-group="8">第8组</div>
+                                <div class="manual-tab" data-group="9">第9组</div>
+                                <div class="manual-tab" data-group="10">第10组</div>
+                            </div>
+                            <div class="manual-selection-area">
+                                <div class="manual-section">
+                                    <h4>红球：<span id="selected-red-count">0</span>/6</h4>
+                                    <div class="manual-balls red-balls-selection" id="manual-red-balls"></div>
+                                </div>
+                                <div class="manual-section">
+                                    <h4>蓝球：<span id="selected-blue-count">0</span>/1</h4>
+                                    <div class="manual-balls blue-balls-selection" id="manual-blue-balls"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="drawing-result" id="drawing-result">
+                            <h3>本期开奖结果</h3>
+                            <div class="result-numbers">
+                                <div class="red-balls">
+                                    <span class="ball-label">红球：</span>
+                                    <div class="balls-container" id="red-balls-result"></div>
+                                </div>
+                                <div class="blue-balls">
+                                    <span class="ball-label">蓝球：</span>
+                                    <div class="balls-container" id="blue-ball-result"></div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ticket-results" id="ticket-results">
+                            <h3>投注结果</h3>
+                            <div class="ticket-frame">
+                                <div class="ticket-groups" id="ticket-groups"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

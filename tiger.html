@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>老虎机模拟器</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="tiger.js"></script>
+</head>
+
+<body>
+    <div id="app">
+        <div id="game-page">
+            <div class="container">
+                <header>
+                    <button class="back-button" id="backToHome">主页</button>
+                    <button class="reset-button" id="resetBtn">重置</button>
+                    <button class="save-button" id="saveBtn">保存</button>
+                    <h1>老虎机模拟器</h1>
+                </header>
+
+                <div class="jinli-label" id="jinliLabel">
+                    <img src="img/锦鲤底图.png" alt="锦鲤底图" class="jinli-base" id="jinliBase">
+                    <img src="img/锦鲤0.png" alt="锦鲤碎片0" class="koi-fragment" id="koiFragment0">
+                    <img src="img/锦鲤1.png" alt="锦鲤碎片1" class="koi-fragment" id="koiFragment1">
+                    <img src="img/锦鲤2.png" alt="锦鲤碎片2" class="koi-fragment" id="koiFragment2">
+                    <img src="img/锦鲤3.png" alt="锦鲤碎片3" class="koi-fragment" id="koiFragment3">
+                    <img src="img/锦鲤4.png" alt="锦鲤碎片4" class="koi-fragment" id="koiFragment4">
+                    <img src="img/锦鲤5.png" alt="锦鲤碎片5" class="koi-fragment" id="koiFragment5">
+                    <img src="img/锦鲤6.png" alt="锦鲤碎片6" class="koi-fragment" id="koiFragment6">
+                    <img src="img/锦鲤7.png" alt="锦鲤碎片7" class="koi-fragment" id="koiFragment7">
+                    <img src="img/锦鲤8.png" alt="锦鲤碎片8" class="koi-fragment" id="koiFragment8">
+                    <img src="img/锦鲤9.png" alt="锦鲤碎片9" class="koi-fragment" id="koiFragment9">
+                </div>
+
+                <div class="display-boxes">
+                    <div class="display-box">
+                        <div class="label">WIN</div>
+                        <div class="value" id="winValue">0</div>
+                    </div>
+                    <div class="display-box credit-box">
+                        <div class="label">CREDIT</div>
+                        <div class="value" id="creditValue">0</div>
+                        <button class="coin-button" onclick="insertCoin()">
+                            <img src="img/投币.png" alt="投币">
+                        </button>
+                        <div class="info-label">
+                            <img src="img/告知.png" alt="告知">
+                        </div>
+                        <div class="info-text-label">本游戏所有积分均为虚拟娱乐用途，不可兑换现金、实物或任何有价权益。开发者未提供、亦不接受任何形式的积分变现服务。</div>
+                    </div>
+
+                </div>
+
+                <div class="slot-grid" id="slotGrid">
+                    <div class="center-display" id="centerDisplay">
+                        <div class="center-images">
+                            <img src="img/财神爷.png" alt="显示区" class="main-img">
+                        </div>
+                        <div class="floating-items">
+                            <img src="img/A大满贯.png" alt="大满贯" class="floating-item" data-position="0">
+                            <img src="img/A双响炮.png" alt="双响炮" class="floating-item" data-position="1">
+                            <img src="img/A彩金.png" alt="彩金" class="floating-item" data-position="2">
+                            <img src="img/A大四喜.png" alt="大四喜" class="floating-item" data-position="3">
+                            <img src="img/A通通有奖.png" alt="通通有奖" class="floating-item" data-position="4">
+                            <img src="img/A小三元.png" alt="小三元" class="floating-item" data-position="5">
+                            <img src="img/A大三元.png" alt="大三元" class="floating-item" data-position="6">
+                            <img src="img/A开火车.png" alt="开火车" class="floating-item" data-position="7">
+                            <img src="img/jf积分池.png" alt="积分池" class="pool-item">
+                            <div class="jf-labels">
+                                <img src="img/jf0.png" alt="jf0" class="jf-label" id="jf0">
+                                <img src="img/jf1.png" alt="jf1" class="jf-label" id="jf1">
+                                <img src="img/jf2.png" alt="jf2" class="jf-label" id="jf2">
+                                <img src="img/jf3.png" alt="jf3" class="jf-label" id="jf3">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-container">
+                    <button class="image-button" id="leftmoveButton">
+                        <img src="img/AA左移.png" alt="左移">
+                    </button>
+                    <button class="image-button" id="rightmoveButton">
+                        <img src="img/AA右移.png" alt="右移">
+                    </button>
+                    <button class="image-button" id="bigButton">
+                        <img src="img/AA猜大.png" alt="大">
+                    </button>
+                    <button class="image-button" id="smallButton">
+                        <img src="img/AA猜小.png" alt="小">
+                    </button>
+                    <button class="start-button" id="startButton">
+                        <img src="img/AA开始.png" alt="开始">
+                    </button>
+                </div>
+
+                <div class="three-row-grid" id="threeRowGrid">
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
