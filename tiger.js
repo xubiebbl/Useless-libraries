@@ -981,6 +981,23 @@ function finishMarquee(finalIndex) {
     currentWinAmount = newWinValue;
     hasWon = totalWin > 0;
 
+    // 如果是大水果（非小水果且非皇冠）且中奖，飞出钱币
+    if (!item.isSmall && !item.name.includes('皇冠') && totalWin > 0) {
+        const finalButton = buttons[finalIndex];
+        const rect = finalButton.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        
+        const coinCount = Math.floor(Math.random() * 10) + 1; // 1-10个钱币
+        setTimeout(() => {
+            for (let i = 0; i < coinCount; i++) {
+                setTimeout(() => {
+                    createCoin(centerX, centerY);
+                }, i * 100);
+            }
+        }, 500);
+    }
+
     if (totalWin >= 10000 && !koiFragments.achievements.singleWinOver10000) {
         koiFragments.achievements.singleWinOver10000 = true;
         checkAndAwardKoiFragment(0);
@@ -1302,9 +1319,20 @@ function animatePoolIncrement(targetMultiplier, item) {
     }
     
     let currentValue = 0;
-    const incrementSpeed = 100;
     
-    console.log('开始逐次增加动画，从 0 到', targetMultiplier);
+    // 根据倍率动态调整滚动速度
+    let incrementSpeed;
+    if (targetMultiplier <= 20) {
+        incrementSpeed = 100;
+    } else if (targetMultiplier <= 40) {
+        incrementSpeed = 80;
+    } else if (targetMultiplier <= 60) {
+        incrementSpeed = 60;
+    } else {
+        incrementSpeed = 50;
+    }
+    
+    console.log('开始逐次增加动画，从 0 到', targetMultiplier, '速度:', incrementSpeed, 'ms/次');
     
     const incrementInterval = setInterval(() => {
         if (currentValue >= targetMultiplier) {
@@ -1446,6 +1474,23 @@ function enhancedMultiLightSettlement(positions, gameType) {
             // 按钮缩放动画（最大1.1倍）
             const buttonIndex = getButtonIndexByPosition(pos);
             animateButtonScale(buttons[buttonIndex], 2000);
+            
+            // 如果是大水果（非小水果且非皇冠），飞出钱币
+            if (!item.isSmall && !item.name.includes('皇冠') && win > 0) {
+                const button = buttons[buttonIndex];
+                const rect = button.getBoundingClientRect();
+                const centerX = rect.left + rect.width / 2;
+                const centerY = rect.top + rect.height / 2;
+                
+                const coinCount = Math.floor(Math.random() * 10) + 1; // 1-10个钱币
+                setTimeout(() => {
+                    for (let i = 0; i < coinCount; i++) {
+                        setTimeout(() => {
+                            createCoin(centerX, centerY);
+                        }, i * 100);
+                    }
+                }, 500);
+            }
             
             // 积分池显示当前倍率（使用jf*.png图片）
             console.log('结算信息:', { item: item.name, multiplier: multiplier, type: item.type });
@@ -1628,30 +1673,50 @@ function executeInnerCirclePrize(prizeName) {
     const jinliLabel = document.getElementById('jinliLabel');
     showGameplayEffect(prizeName, 3000, jinliLabel);
     
+    // 飞出20个元宝
+    const centerDisplay = document.getElementById('centerDisplay');
+    if (centerDisplay) {
+        const rect = centerDisplay.getBoundingClientRect();
+        const centerX = rect.left + rect.width / 2;
+        const centerY = rect.top + rect.height / 2;
+        
+        setTimeout(() => {
+            createTreasures(centerX, centerY);
+        }, 500);
+    }
+    
     switch (prizeName) {
         case '大满贯':
             executeBigWin();
+            createBigWinEffect();
             break;
         case '双响炮':
             executeDoubleCannon();
+            createDoubleCannonEffect();
             break;
         case '彩金':
             executeColorGold();
+            createColorGoldEffect();
             break;
         case '大四喜':
             executeFourJoys();
+            createFourJoysEffect();
             break;
         case '通通有奖':
             executeAllPrizes();
+            createAllPrizesEffect();
             break;
         case '小三元':
             executeSmallThree();
+            createSmallThreeEffect();
             break;
         case '大三元':
             executeBigThree();
+            createBigThreeEffect();
             break;
         case '开火车':
             executeTrain();
+            createTrainEffect();
             break;
     }
 }
@@ -2837,6 +2902,438 @@ function createTreasures(centerX, centerY) {
     }
 }
 
+function createBigWinEffect() {
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    
+    for (let i = 0; i < 50; i++) {
+        setTimeout(() => {
+            const star = document.createElement('div');
+            star.style.position = 'fixed';
+            star.style.width = '4px';
+            star.style.height = '4px';
+            star.style.backgroundColor = '#ffd700';
+            star.style.borderRadius = '50%';
+            star.style.boxShadow = '0 0 10px #ffd700, 0 0 20px #ff8c00';
+            star.style.left = centerX + 'px';
+            star.style.top = centerY + 'px';
+            star.style.zIndex = '1000';
+            star.style.pointerEvents = 'none';
+            document.body.appendChild(star);
+            
+            const angle = Math.random() * Math.PI * 2;
+            const distance = 200 + Math.random() * 300;
+            const endX = centerX + Math.cos(angle) * distance;
+            const endY = centerY + Math.sin(angle) * distance;
+            
+            const duration = 1500;
+            const startTime = performance.now();
+            
+            function animateStar() {
+                const elapsed = performance.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                const currentX = centerX + (endX - centerX) * progress;
+                const currentY = centerY + (endY - centerY) * progress;
+                const scale = 1 + Math.sin(progress * Math.PI) * 0.5;
+                
+                star.style.left = currentX + 'px';
+                star.style.top = currentY + 'px';
+                star.style.transform = `scale(${scale})`;
+                star.style.opacity = 1 - progress;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animateStar);
+                } else {
+                    star.remove();
+                }
+            }
+            
+            requestAnimationFrame(animateStar);
+        }, i * 30);
+    }
+}
+
+function createDoubleCannonEffect() {
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    
+    for (let i = 0; i < 2; i++) {
+        setTimeout(() => {
+            const angle = (i === 0) ? -Math.PI / 4 : Math.PI * 3 / 4;
+            const startX = centerX;
+            const startY = centerY;
+            
+            for (let j = 0; j < 30; j++) {
+                setTimeout(() => {
+                    const particle = document.createElement('div');
+                    particle.style.position = 'fixed';
+                    particle.style.width = '6px';
+                    particle.style.height = '6px';
+                    particle.style.backgroundColor = '#ff4444';
+                    particle.style.borderRadius = '50%';
+                    particle.style.boxShadow = '0 0 10px #ff4444, 0 0 20px #ff0000';
+                    particle.style.left = startX + 'px';
+                    particle.style.top = startY + 'px';
+                    particle.style.zIndex = '1000';
+                    particle.style.pointerEvents = 'none';
+                    document.body.appendChild(particle);
+                    
+                    const distance = 150 + j * 10;
+                    const endX = startX + Math.cos(angle) * distance;
+                    const endY = startY + Math.sin(angle) * distance;
+                    
+                    const duration = 1000;
+                    const startTime = performance.now();
+                    
+                    function animateParticle() {
+                        const elapsed = performance.now() - startTime;
+                        const progress = Math.min(elapsed / duration, 1);
+                        
+                        const currentX = startX + (endX - startX) * progress;
+                        const currentY = startY + (endY - startY) * progress;
+                        
+                        particle.style.left = currentX + 'px';
+                        particle.style.top = currentY + 'px';
+                        particle.style.opacity = 1 - progress;
+                        
+                        if (progress < 1) {
+                            requestAnimationFrame(animateParticle);
+                        } else {
+                            particle.remove();
+                        }
+                    }
+                    
+                    requestAnimationFrame(animateParticle);
+                }, j * 20);
+            }
+        }, i * 500);
+    }
+}
+
+function createColorGoldEffect() {
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    
+    for (let i = 0; i < 8; i++) {
+        setTimeout(() => {
+            const angle = (Math.PI * 2 / 8) * i;
+            const startX = centerX;
+            const startY = centerY;
+            
+            const particle = document.createElement('div');
+            particle.style.position = 'fixed';
+            particle.style.width = '20px';
+            particle.style.height = '20px';
+            particle.style.background = 'linear-gradient(45deg, #ffd700, #ff8c00)';
+            particle.style.borderRadius = '50%';
+            particle.style.boxShadow = '0 0 20px #ffd700, 0 0 40px #ff8c00';
+            particle.style.left = startX + 'px';
+            particle.style.top = startY + 'px';
+            particle.style.zIndex = '1000';
+            particle.style.pointerEvents = 'none';
+            document.body.appendChild(particle);
+            
+            const distance = 300;
+            const endX = startX + Math.cos(angle) * distance;
+            const endY = startY + Math.sin(angle) * distance;
+            
+            const duration = 2000;
+            const startTime = performance.now();
+            
+            function animateParticle() {
+                const elapsed = performance.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                const currentX = startX + (endX - startX) * progress;
+                const currentY = startY + (endY - startY) * progress;
+                const scale = 1 + Math.sin(progress * Math.PI * 4) * 0.3;
+                
+                particle.style.left = currentX + 'px';
+                particle.style.top = currentY + 'px';
+                particle.style.transform = `scale(${scale})`;
+                particle.style.opacity = 1 - progress;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animateParticle);
+                } else {
+                    particle.remove();
+                }
+            }
+            
+            requestAnimationFrame(animateParticle);
+        }, i * 100);
+    }
+}
+
+function createFourJoysEffect() {
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    
+    for (let i = 0; i < 4; i++) {
+        setTimeout(() => {
+            const angle = (Math.PI * 2 / 4) * i;
+            const startX = centerX;
+            const startY = centerY;
+            
+            const ring = document.createElement('div');
+            ring.style.position = 'fixed';
+            ring.style.width = '10px';
+            ring.style.height = '10px';
+            ring.style.border = '3px solid #ff69b4';
+            ring.style.borderRadius = '50%';
+            ring.style.boxShadow = '0 0 20px #ff69b4, 0 0 40px #4a90e2';
+            ring.style.left = startX + 'px';
+            ring.style.top = startY + 'px';
+            ring.style.zIndex = '1000';
+            ring.style.pointerEvents = 'none';
+            document.body.appendChild(ring);
+            
+            const distance = 250;
+            const endX = startX + Math.cos(angle) * distance;
+            const endY = startY + Math.sin(angle) * distance;
+            
+            const duration = 1500;
+            const startTime = performance.now();
+            
+            function animateRing() {
+                const elapsed = performance.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                const currentX = startX + (endX - startX) * progress;
+                const currentY = startY + (endY - startY) * progress;
+                const scale = 1 + progress * 2;
+                
+                ring.style.left = currentX + 'px';
+                ring.style.top = currentY + 'px';
+                ring.style.transform = `scale(${scale})`;
+                ring.style.opacity = 1 - progress;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animateRing);
+                } else {
+                    ring.remove();
+                }
+            }
+            
+            requestAnimationFrame(animateRing);
+        }, i * 200);
+    }
+}
+
+function createAllPrizesEffect() {
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    
+    for (let i = 0; i < 20; i++) {
+        setTimeout(() => {
+            const particle = document.createElement('div');
+            particle.style.position = 'fixed';
+            particle.style.width = '8px';
+            particle.style.height = '8px';
+            particle.style.background = 'linear-gradient(135deg, #667eea, #764ba2)';
+            particle.style.borderRadius = '50%';
+            particle.style.boxShadow = '0 0 15px #667eea, 0 0 30px #764ba2';
+            particle.style.left = centerX + 'px';
+            particle.style.top = centerY + 'px';
+            particle.style.zIndex = '1000';
+            particle.style.pointerEvents = 'none';
+            document.body.appendChild(particle);
+            
+            const angle = Math.random() * Math.PI * 2;
+            const distance = 200 + Math.random() * 200;
+            const endX = centerX + Math.cos(angle) * distance;
+            const endY = centerY + Math.sin(angle) * distance;
+            
+            const duration = 1800;
+            const startTime = performance.now();
+            
+            function animateParticle() {
+                const elapsed = performance.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                const currentX = centerX + (endX - centerX) * progress;
+                const currentY = centerY + (endY - centerY) * progress;
+                
+                particle.style.left = currentX + 'px';
+                particle.style.top = currentY + 'px';
+                particle.style.opacity = 1 - progress;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animateParticle);
+                } else {
+                    particle.remove();
+                }
+            }
+            
+            requestAnimationFrame(animateParticle);
+        }, i * 50);
+    }
+}
+
+function createSmallThreeEffect() {
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    
+    for (let i = 0; i < 3; i++) {
+        setTimeout(() => {
+            const angle = (Math.PI * 2 / 3) * i - Math.PI / 2;
+            const startX = centerX;
+            const startY = centerY;
+            
+            const triangle = document.createElement('div');
+            triangle.style.position = 'fixed';
+            triangle.style.width = '0';
+            triangle.style.height = '0';
+            triangle.style.borderLeft = '15px solid transparent';
+            triangle.style.borderRight = '15px solid transparent';
+            triangle.style.borderBottom = '25px solid #00ff00';
+            triangle.style.left = startX + 'px';
+            triangle.style.top = startY + 'px';
+            triangle.style.zIndex = '1000';
+            triangle.style.pointerEvents = 'none';
+            document.body.appendChild(triangle);
+            
+            const distance = 200;
+            const endX = startX + Math.cos(angle) * distance;
+            const endY = startY + Math.sin(angle) * distance;
+            
+            const duration = 1500;
+            const startTime = performance.now();
+            
+            function animateTriangle() {
+                const elapsed = performance.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                const currentX = startX + (endX - startX) * progress;
+                const currentY = startY + (endY - startY) * progress;
+                const rotation = progress * 360;
+                
+                triangle.style.left = currentX + 'px';
+                triangle.style.top = currentY + 'px';
+                triangle.style.transform = `rotate(${rotation}deg)`;
+                triangle.style.opacity = 1 - progress;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animateTriangle);
+                } else {
+                    triangle.remove();
+                }
+            }
+            
+            requestAnimationFrame(animateTriangle);
+        }, i * 300);
+    }
+}
+
+function createBigThreeEffect() {
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    
+    for (let i = 0; i < 3; i++) {
+        setTimeout(() => {
+            const angle = (Math.PI * 2 / 3) * i - Math.PI / 2;
+            const startX = centerX;
+            const startY = centerY;
+            
+            const star = document.createElement('div');
+            star.style.position = 'fixed';
+            star.style.width = '30px';
+            star.style.height = '30px';
+            star.style.background = 'radial-gradient(circle, #ffff00, #ff8c00)';
+            star.style.clipPath = 'polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 2% 60%, 59% 23%, 68% 57%, 87% 83%, 82% 75%, 97% 75%, 79% 91%, 50% 70%, 21% 91%, 2% 60%, 59% 23%, 68% 57%, 87% 83%, 82% 75%, 97% 75%, 79% 91%, 50% 70%, 21% 91%, 2% 60%, 59% 23%, 68% 57%, 87% 83%, 82% 75%, 97% 75%, 79% 91%, 50% 70%, 21% 91%, 2% 60%, 59% 23%, 68% 57%, 87% 83%, 82% 75%, 97% 75%)';
+            star.style.boxShadow = '0 0 30px #ffff00, 0 0 60px #ff8c00';
+            star.style.left = startX + 'px';
+            star.style.top = startY + 'px';
+            star.style.zIndex = '1000';
+            star.style.pointerEvents = 'none';
+            document.body.appendChild(star);
+            
+            const distance = 300;
+            const endX = startX + Math.cos(angle) * distance;
+            const endY = startY + Math.sin(angle) * distance;
+            
+            const duration = 2000;
+            const startTime = performance.now();
+            
+            function animateStar() {
+                const elapsed = performance.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                const currentX = startX + (endX - startX) * progress;
+                const currentY = startY + (endY - startY) * progress;
+                const scale = 1 + Math.sin(progress * Math.PI) * 0.5;
+                const rotation = progress * 720;
+                
+                star.style.left = currentX + 'px';
+                star.style.top = currentY + 'px';
+                star.style.transform = `scale(${scale}) rotate(${rotation}deg)`;
+                star.style.opacity = 1 - progress;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animateStar);
+                } else {
+                    star.remove();
+                }
+            }
+            
+            requestAnimationFrame(animateStar);
+        }, i * 400);
+    }
+}
+
+function createTrainEffect() {
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight / 2;
+    
+    for (let i = 0; i < 5; i++) {
+        setTimeout(() => {
+            const particle = document.createElement('div');
+            particle.style.position = 'fixed';
+            particle.style.width = '15px';
+            particle.style.height = '15px';
+            particle.style.background = 'linear-gradient(45deg, #ff6b6b, #ee5a24)';
+            particle.style.borderRadius = '3px';
+            particle.style.boxShadow = '0 0 20px #ff6b6b, 0 0 40px #ee5a24';
+            particle.style.left = centerX + 'px';
+            particle.style.top = centerY + 'px';
+            particle.style.zIndex = '1000';
+            particle.style.pointerEvents = 'none';
+            document.body.appendChild(particle);
+            
+            const angle = Math.random() * Math.PI * 2;
+            const distance = 250 + Math.random() * 150;
+            const endX = centerX + Math.cos(angle) * distance;
+            const endY = centerY + Math.sin(angle) * distance;
+            
+            const duration = 2000;
+            const startTime = performance.now();
+            
+            function animateParticle() {
+                const elapsed = performance.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                const currentX = centerX + (endX - centerX) * progress;
+                const currentY = centerY + (endY - centerY) * progress;
+                const rotation = progress * 360;
+                
+                particle.style.left = currentX + 'px';
+                particle.style.top = currentY + 'px';
+                particle.style.transform = `rotate(${rotation}deg)`;
+                particle.style.opacity = 1 - progress;
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animateParticle);
+                } else {
+                    particle.remove();
+                }
+            }
+            
+            requestAnimationFrame(animateParticle);
+        }, i * 200);
+    }
+}
+
 function saveData() {
     const data = {
         credit: getCurrentCredit(),
@@ -3262,25 +3759,67 @@ function weightedRandomPoolValue() {
 }
 
 function initializeTestMenu() {
-    const testMenuButton = document.getElementById('testMenuButton');
-    const testMenuDropdown = document.getElementById('testMenuDropdown');
+    const testBtn = document.getElementById('testBtn');
+    const testMenu = document.getElementById('testMenu');
+    const closeTest = document.getElementById('closeTest');
     
-    if (testMenuButton && testMenuDropdown) {
-        testMenuButton.addEventListener('click', (e) => {
-            e.stopPropagation();
-            testMenuDropdown.classList.toggle('show');
+    if (testBtn && testMenu && closeTest) {
+        testBtn.addEventListener('click', () => {
+            testMenu.classList.add('active');
         });
         
-        document.addEventListener('click', (e) => {
-            if (!testMenuDropdown.contains(e.target) && !testMenuButton.contains(e.target)) {
-                testMenuDropdown.classList.remove('show');
-            }
-        });
-        
-        testMenuDropdown.addEventListener('click', (e) => {
-            e.stopPropagation();
+        closeTest.addEventListener('click', () => {
+            testMenu.classList.remove('active');
         });
     }
+}
+
+function testBigWin() {
+    const testMenu = document.getElementById('testMenu');
+    if (testMenu) testMenu.classList.remove('active');
+    executeInnerCirclePrize('大满贯');
+}
+
+function testDoubleCannon() {
+    const testMenu = document.getElementById('testMenu');
+    if (testMenu) testMenu.classList.remove('active');
+    executeInnerCirclePrize('双响炮');
+}
+
+function testColorGold() {
+    const testMenu = document.getElementById('testMenu');
+    if (testMenu) testMenu.classList.remove('active');
+    executeInnerCirclePrize('彩金');
+}
+
+function testFourJoys() {
+    const testMenu = document.getElementById('testMenu');
+    if (testMenu) testMenu.classList.remove('active');
+    executeInnerCirclePrize('大四喜');
+}
+
+function testAllPrizes() {
+    const testMenu = document.getElementById('testMenu');
+    if (testMenu) testMenu.classList.remove('active');
+    executeInnerCirclePrize('通通有奖');
+}
+
+function testSmallThree() {
+    const testMenu = document.getElementById('testMenu');
+    if (testMenu) testMenu.classList.remove('active');
+    executeInnerCirclePrize('小三元');
+}
+
+function testBigThree() {
+    const testMenu = document.getElementById('testMenu');
+    if (testMenu) testMenu.classList.remove('active');
+    executeInnerCirclePrize('大三元');
+}
+
+function testTrain() {
+    const testMenu = document.getElementById('testMenu');
+    if (testMenu) testMenu.classList.remove('active');
+    executeInnerCirclePrize('开火车');
 }
 
 document.addEventListener('DOMContentLoaded', () => {

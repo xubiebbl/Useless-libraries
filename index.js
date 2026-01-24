@@ -43,3 +43,4 @@ loginForm.addEventListener('submit', (e) => {
     
     loginModal.classList.remove('active');
 });
+                                       
